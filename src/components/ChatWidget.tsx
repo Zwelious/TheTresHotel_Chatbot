@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -145,13 +146,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
               >
                 <div
                   className={cn(
-                    "max-w-[80%] px-4 py-2 rounded-lg text-sm",
+                    "max-w-[80%] px-4 py-2 rounded-lg text-sm whitespace-pre-wrap",
                     message.isUser
                       ? "bg-chat-user-bubble text-primary-foreground ml-4"
                       : "bg-chat-bot-bubble text-foreground mr-4"
                   )}
                 >
-                  {message.text}
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
                 </div>
               </div>
             ))}
