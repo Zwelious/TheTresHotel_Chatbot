@@ -36,10 +36,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const formatBotText = (text: string) => {
   return text
-    .replace(/(?<=\n|^)([A-Z][a-zA-Z'’\s&]+)\n/g, '- **$1** — ') // Turn cafe names into bullet points
-    .replace(/\n{2,}/g, '\n') // Collapse double/triple newlines
+    .replace(/\r\n/g, '\n') // normalize line endings
+    .replace(/\n{3,}/g, '\n\n') // collapse 3+ newlines to max 2
+    .replace(/([^\n])\n(?=[^\n])/g, '$1  \n') // force soft line breaks inside paragraphs
     .trim();
-};
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -162,10 +163,11 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   <ReactMarkdown
                     className="text-sm leading-snug"
                     components={{
-                      p: ({ children }) => <span>{children}</span>,
-                      ul: ({ children }) => <ul className="list-disc pl-4">{children}</ul>,
-                      li: ({ children }) => <li className="mb-1">{children}</li>,
+                      p: ({ children }) => <p className="mb-1">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
+                      li: ({ children }) => <li className="mb-0.5">{children}</li>,
                       strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                      br: () => <br />,
                     }}
                   >
                     {formatBotText(message.text)}
