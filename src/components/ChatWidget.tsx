@@ -159,7 +159,15 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       : "bg-chat-bot-bubble text-foreground mr-4"
                   )}
                 >
-                  <ReactMarkdown className="prose prose-sm leading-snug">
+                  <ReactMarkdown
+                    className="text-sm leading-snug"
+                    components={{
+                      p: ({ children }) => <span>{children}</span>,
+                      ul: ({ children }) => <ul className="list-disc pl-4">{children}</ul>,
+                      li: ({ children }) => <li className="mb-1">{children}</li>,
+                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                    }}
+                  >
                     {formatBotText(message.text)}
                   </ReactMarkdown>
                 </div>
