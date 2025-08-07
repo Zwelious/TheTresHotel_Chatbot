@@ -35,12 +35,21 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const formatBotText = (text: string) => {
-  return text
-    .replace(/\r\n/g, '\n') // normalize line endings
-    .replace(/\n{3,}/g, '\n\n') // collapse 3+ newlines to max 2
-    .replace(/([^\n])\n(?=[^\n])/g, '$1  \n') // force soft line breaks inside paragraphs
-    .trim();
+    // Normalize line endings
+    let normalized = text.replace(/\r\n/g, '\n');
+  
+    // Remove triple+ newlines
+    normalized = normalized.replace(/\n{3,}/g, '\n\n');
+  
+    // Add bullet points to lines that start with a capital letter and colon (common in OpenAI structured text)
+    normalized = normalized.replace(/(^|\n)([A-Z][^\n:]{1,50}):/g, '$1- **$2:**');
+  
+    // Collapse single newlines to forced line breaks within paragraphs
+    normalized = normalized.replace(/([^\n])\n(?=[^\n])/g, '$1  \n');
+  
+    return normalized.trim();
   };
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
