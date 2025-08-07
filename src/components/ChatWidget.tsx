@@ -34,6 +34,13 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const formatBotText = (text: string) => {
+  return text
+    .replace(/(?<=\n|^)([A-Z][a-zA-Z'’\s&]+)\n/g, '- **$1** — ') // Turn cafe names into bullet points
+    .replace(/\n{2,}/g, '\n') // Collapse double/triple newlines
+    .trim();
+};
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -152,16 +159,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       : "bg-chat-bot-bubble text-foreground mr-4"
                   )}
                 >
-                  <ReactMarkdown
-                    className="prose prose-sm max-w-none m-0 p-0 leading-snug text-sm"
-                    components={{
-                      p: ({ children }) => <p className="m-0 p-0">{children}</p>,
-                      ul: ({ children }) => <ul className="list-disc pl-5 m-0">{children}</ul>,
-                      li: ({ children }) => <li className="m-0">{children}</li>,
-                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                    }}
-                  >
-                    {message.text.trim()}
+                  <ReactMarkdown className="prose prose-sm leading-snug">
+                    {formatBotText(message.text)}
                   </ReactMarkdown>
                 </div>
               </div>
