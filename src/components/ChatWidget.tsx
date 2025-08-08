@@ -35,19 +35,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const formatBotText = (text: string) => {
-    // Normalize line endings
-    let normalized = text.replace(/\r\n/g, '\n');
-  
-    // Remove triple+ newlines
-    normalized = normalized.replace(/\n{3,}/g, '\n\n');
-  
-    // Add bullet points to lines that start with a capital letter and colon (common in OpenAI structured text)
-    normalized = normalized.replace(/(^|\n)([A-Z][^\n:]{1,50}):/g, '$1- **$2:**');
-  
-    // Collapse single newlines to forced line breaks within paragraphs
-    normalized = normalized.replace(/([^\n])\n(?=[^\n])/g, '$1  \n');
-  
-    return normalized.trim();
+    return text
+      // Normalize line endings
+      .replace(/\r\n/g, '\n')
+      // Remove leading/trailing spaces on each line
+      .split('\n').map(line => line.trim()).join('\n')
+      // Collapse 3 or more newlines into just 2 (paragraph spacing)
+      .replace(/\n{3,}/g, '\n\n')
+      // Ensure bullet points are formatted correctly
+      .replace(/^\* /gm, '- ')
+      // Ensure lines with text but missing bullet markers are not randomly spaced
+      .replace(/([^\n])\n(?=[^\n*-])/g, '$1 ') // merge lines that shouldn’t break
+      .trim();
   };
 
 
@@ -170,16 +169,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                   )}
                 >
                   <ReactMarkdown
-                    className="text-sm leading-snug"
                     components={{
-                      p: ({ children }) => <p className="mb-1">{children}</p>,
-                      ul: ({ children }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
-                      li: ({ children }) => <li className="mb-0.5">{children}</li>,
+                      ul: ({ children }) => <ul className="list-disc pl-4">{children}</ul>,
+                      li: ({ children }) => <li className="mb-1">{children}</li>,
                       strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                      br: () => <br />,
+                      p: ({ children }) => <p className="mb-1">{children}</p>,
                     }}
                   >
-                    {formatBotText(message.text)}
+                    {message.isUser ? message.text : formatBotText(message.text)}
                   </ReactMarkdown>
                 </div>
               </div>
