@@ -36,14 +36,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
 
   const formatBotText = (text: string) => {
     return text
-      // Turn "Email:\nvalue" into "**Email:** value"
-      .replace(/([A-Za-z ]+):\s*\n([^\n]+)/g, (_, label, value) => `**${label.trim()}:** ${value.trim()}`)
-      
-      // Handle "Email: value Number: value" on one line
-      .replace(/([A-Za-z ]+):\s*([^\n]+)\s+(?=[A-Za-z ]+:)/g, (_, label, value) => `**${label.trim()}:** ${value.trim()}  \n`)
-      
-      // Clean up multiple blank lines
-      .replace(/\n{2,}/g, '\n')
+      // Normalize line endings
+      .replace(/\r\n/g, '\n')
+      // Remove leading/trailing spaces on each line
+      .split('\n').map(line => line.trim()).join('\n')
+      // Collapse 3 or more newlines into just 2 (paragraph spacing)
+      .replace(/\n{3,}/g, '\n\n')
+      // Ensure bullet points are formatted correctly
+      .replace(/^\* /gm, '- ')
+      // Ensure lines with text but missing bullet markers are not randomly spaced
+      .replace(/([^\n])\n(?=[^\n*-])/g, '$1 ') // merge lines that shouldn’t break
       .trim();
   };
 
