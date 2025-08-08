@@ -46,6 +46,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       .replace(/^\* /gm, '- ')
       // Ensure lines with text but missing bullet markers are not randomly spaced
       .replace(/([^\n])\n(?=[^\n*-])/g, '$1 ') // merge lines that shouldn’t break
+      // Turn "Email:\nvalue" into "**Email:** value"
+      .replace(/([A-Za-z ]+):\s*\n([^\n]+)/g, (_, label, value) => `**${label.trim()}:** ${value.trim()}`)
+      
+      // Handle "Email: value Number: value" on one line
+      .replace(/([A-Za-z ]+):\s*([^\n]+)\s+(?=[A-Za-z ]+:)/g, (_, label, value) => `**${label.trim()}:** ${value.trim()}  \n`)
+      
+      // Clean up multiple blank lines
+      .replace(/\n{2,}/g, '\n')
       .trim();
   };
 
