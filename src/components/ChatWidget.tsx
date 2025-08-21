@@ -18,7 +18,7 @@ interface ChatWidgetProps {
 }
 
 export const ChatWidget: React.FC<ChatWidgetProps> = ({ 
-  webhookUrl = 'https://ahanswitono.app.n8n.cloud/webhook/3f197b8c-c4dd-4610-ab2c-d4c2f80125e5',
+  webhookUrl = 'https://educhatco.app.n8n.cloud/webhook/3f197b8c-c4dd-4610-ab2c-d4c2f80125e5',
   className 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
